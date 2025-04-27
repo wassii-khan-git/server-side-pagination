@@ -1,7 +1,11 @@
+"use client";
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const router = useRouter();
   return (
     <>
       <nav className="bg-gray-800">
@@ -61,40 +65,41 @@ const Navbar = () => {
             </div>
             <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
               <div className="flex shrink-0 items-center">
-                <img
-                  className="h-8 w-auto"
+                <Image
                   src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
+                  height={32}
+                  width={32}
+                  className="h-8 w-8 rounded-full"
                   alt="Your Company"
                 />
               </div>
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4">
-                  {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-                  <a
-                    href="#"
-                    className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                    aria-current="page"
+                  <Link
+                    href="/"
+                    className={`rounded-md px-3 py-2 text-sm font-medium ${
+                      router.pathname === "/"
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    }`}
+                    aria-current={router.pathname === "/" ? "page" : undefined}
                   >
-                    Dashboard
-                  </a>
-                  <a
-                    href="#"
-                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                    Home
+                  </Link>
+
+                  <Link
+                    href="/users"
+                    className={`rounded-md px-3 py-2 text-sm font-medium ${
+                      router.pathname === "/users"
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    }`}
+                    aria-current={
+                      router.pathname === "/users" ? "page" : undefined
+                    }
                   >
-                    Team
-                  </a>
-                  <a
-                    href="#"
-                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Projects
-                  </a>
-                  <a
-                    href="#"
-                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Calendar
-                  </a>
+                    Users
+                  </Link>
                 </div>
               </div>
             </div>
@@ -147,7 +152,7 @@ const Navbar = () => {
           </div>
         </div>
         {/* Mobile menu, show/hide based on menu state. */}
-        <div className="sm:hidden" id="mobile-menu">
+        <div className="hidden" id="mobile-menu">
           <div className="space-y-1 px-2 pt-2 pb-3">
             {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
             <a

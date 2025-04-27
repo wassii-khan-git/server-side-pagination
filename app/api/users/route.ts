@@ -1,37 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateRandomUsers } from "@/lib/helper";
-export async function GET(req: NextRequest) {
-  // URL
-  const url = new URL(req.url);
-  // Page and limit
-  const page = url.searchParams.get("page");
-  const limit = url.searchParams.get("limit");
+import DatabaseConnection from "@/lib/db/connect";
+import userModel from "@/lib/models/user-model";
 
-  if (page === null || limit === null) {
+export async function GET(req: NextRequest) {
+  try {
+    const url = new URL(req.url);
+    const page = parseInt(url.searchParams.get("page") || "1");
+    const limit = parseInt(url.searchParams.get("limit") || "10");
+
+    // Validate parameters
+    if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1) {
+      return NextResponse.json(
+        { message: "Invalid page or limit parameters" },
+        { status: 400 }
+      );
+    }
+
+    // Connect to database first
+    await DatabaseConnection();
+
+    // await generateAndInsertUsers(100);
+
+    // Calculate pagination values
+    const skip = (page - 1) * limit;
+
+    // Get paginated data
+    const users = await userModel.find().skip(skip).limit(limit).lean();
+
+    // Get total count
+    const totalCount = await userModel.countDocuments();
+    const totalPages = Math.ceil(totalCount / limit);
+
+    // Create response structure
+    const response = {
+      data: users,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalCount,
+        itemsPerPage: limit,
+      },
+    };
+
+    return NextResponse.json(response, { status: 200 });
+  } catch (error) {
+    console.error("Error in users route:", error);
     return NextResponse.json(
-      { message: "Page and limit are required" },
-      { status: 400 }
+      { message: "Internal server error" },
+      { status: 500 }
     );
   }
-
-  const data = generateRandomUsers(10000);
-  console.log("data", data);
-
-  // Pagination
-  const start = (Number(page) - 1) * Number(limit);
-  const end = start + Number(limit);
-  const paginatedData = data.slice(start, end);
-  console.log("paginatedData", paginatedData);
-
-  // Total pages
-  const totalPages = Math.ceil(data.length / Number(limit));
-  // Response
-  const paginationInfo = {
-    data: paginatedData,
-    totalPages,
-    currentPage: Number(page),
-    totalCount: data.length,
-  };
-  // Return response
-  return NextResponse.json(paginationInfo, { status: 200 });
 }
