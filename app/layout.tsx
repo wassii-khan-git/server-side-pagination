@@ -1,7 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import ".././globals.css";
+import "./globals.css";
 import Navbar from "@/components/navbar";
 
 const geistPoppins = Geist({
@@ -28,7 +28,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* Navbar */}
         <Navbar />
         {/* Main content */}
-        <main className="max-w-[75rem] mx-auto">{children}</main>
+        <main className="w-[95%] md:max-w-[75rem] mx-auto">{children}</main>
       </body>
     </html>
   );

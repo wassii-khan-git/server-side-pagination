@@ -1,4 +1,4 @@
-import { Users } from "@/app/(website)/(common)/table/columns";
+import { Users } from "@/components/table/columns";
 
 export async function getUsers(
   page?: number,
